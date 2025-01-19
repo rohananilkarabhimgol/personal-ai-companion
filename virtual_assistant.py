@@ -3,7 +3,12 @@ import speech_recognition as sr
 import pyttsx3
 import webbrowser
 import pywhatkit
+import json
+import requests
 
+''' NEWS API'''
+newsapi = open("news_api.txt","r").read()
+url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={newsapi}"
 
 # Initializing the text-to-speech engine
 engine = pyttsx3.init()
@@ -44,6 +49,25 @@ def process_command(c):
         pywhatkit.sendwhatmsg(name, "Hi")
         webbrowser.open(f"https://www.whatsapp.com")
          
+    # Fetching news throw an api key
+    elif "news" in c.lower():
+        response = requests.get(url)
+        # Check if the request was sucessfull
+        
+        if response.status_code == 200:
+            # Parsing the JSON response
+            data = response.json()
+
+            # Extracting the articles
+            articals = data.get('articles',[])
+
+            # Printing the articles
+            for artical in articals :
+                speak(artical['title'])
+
+        else:
+            speak(f"Failed to retrive the headline! {response.status_code}")
+
 
 if __name__ == "__main__":
     speak("Activating assistant")
