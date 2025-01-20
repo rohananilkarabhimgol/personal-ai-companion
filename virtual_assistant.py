@@ -45,7 +45,7 @@ def process_command(c):
             speak("No song found")
     # Condition to send message on whatsapp
     elif "send whatsapp message" in c.lower(): 
-        name = c.replace("send whatsapp message to","").strip
+        name = c.replace("send whatsapp message to","").strip()
         pywhatkit.sendwhatmsg(name, "Hi")
         webbrowser.open(f"https://www.whatsapp.com")
          
