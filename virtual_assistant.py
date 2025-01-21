@@ -5,6 +5,8 @@ import webbrowser
 import pywhatkit
 import json
 import requests
+from ollama import chat
+from ollama import ChatResponse
 
 ''' NEWS API'''
 newsapi = open("news_api.txt","r").read()
@@ -22,6 +24,18 @@ engine.setProperty('rate', 130)     # setting up new voice rate
 voices = engine.getProperty('voices')       #getting details of current voice
 #engine.setProperty('voice', voices[0].id)  #changing index, changes voices. o for male
 engine.setProperty('voice', voices[1].id)   #changing index, changes voices. 1 for female
+
+""" Ollama """
+def aiProcessing(c):
+    response: ChatResponse = chat(model='llama3.2', messages=[
+    {
+        'role': 'user',
+        'content': c,
+    },
+    ])
+    return(response['message']['content'])
+    # # or access fields directly from the response object
+    # return(response.message.content)
 
 # Function to convert text to speech and play it aloud
 def speak(text):
@@ -67,6 +81,10 @@ def process_command(c):
 
         else:
             speak(f"Failed to retrive the headline! {response.status_code}")
+
+    else:
+        processed_command = aiProcessing(c)
+        speak(processed_command)
 
 
 if __name__ == "__main__":
